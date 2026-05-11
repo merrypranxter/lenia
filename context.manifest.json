@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "lenia",
+  "name": "Lenia — Multi-Kernel Continuous Cellular Automata",
+  "description": "Self-organizing alien organisms from pure mathematics. Multi-channel activator-inhibitor dynamics, GPU convolution, emergent locomotion. Context source for RepoScripter2 and ShaderForge.",
+  "tags": ["cellular-automata", "lenia", "generative-art", "gpu", "webgl", "organisms", "continuous", "multi-kernel", "activator-inhibitor"],
+  "files": [
+    "README.md",
+    "repo_seed.txt"
+  ],
+  "ai_hints": {
+    "primary_vibe": "biological-alien luminous organisms on void, multi-channel chemical dynamics, activator-inhibitor locomotion",
+    "render_target": "Three.js WebGL2 with GPGPU ping-pong FBOs, channel composite pass, additive blending",
+    "aesthetic_keywords": ["luminous void", "alien biology", "chemical channels", "organism trails", "membrane oscillation", "glowing cores"],
+    "known_organisms": ["Orbium", "Scutium", "Gyrorbium", "Hydrogeminium", "Chromorbium", "Volvox"],
+    "interaction_hooks": ["mouse inject concentration", "click to seed organism", "scroll adjusts timestep"],
+    "color_palette": {
+      "background": "#000000",
+      "channel_0": "#ff00ff",
+      "channel_1": "#00ffee",
+      "channel_2": "#8800ff",
+      "growth_heat": "#ff6600",
+      "hot_core": "#ffffff"
+    }
+  }
+}

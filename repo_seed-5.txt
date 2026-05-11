@@ -1,0 +1,301 @@
+LENIA — MULTI-KERNEL CONTINUOUS CELLULAR AUTOMATA
+repo_seed.txt | context source for RepoScripter2 + ShaderForge ecosystem
+=============================================================================
+
+PURPOSE
+-------
+This file is the deep-context mathematical and aesthetic guide for the Lenia
+simulation engine. Feed this to an AI art generator. The organisms described
+here are real — they emerge from pure mathematics, no hard-coding. The goal of
+any art generated from this context should feel: biological, alien, luminous,
+uncomfortably alive.
+
+
+=============================================================================
+SECTION 1: WHAT LENIA IS AND WHY IT MATTERS
+=============================================================================
+
+Lenia (Bert Wang-Chak Chan, 2019) is a continuous generalization of cellular
+automata. In Game of Life, cells are alive or dead, time ticks in integers,
+and neighborhoods are 3×3 grids. Lenia dissolves every one of those
+discretizations:
+
+  - State ∈ [0, 1]   (continuous concentration, not binary)
+  - Time ∈ ℝ         (fractional timesteps, not integer ticks)  
+  - Space ∈ ℝ²       (smooth convolution kernels, not neighbor counts)
+
+The result is a system that spontaneously generates self-organizing,
+self-repairing, locomoting patterns — "creatures" — from nothing but math
+and initial conditions. These aren't pre-programmed. They're attractors in a
+high-dimensional dynamical system. They exist because the math makes them
+inevitable under the right parameters.
+
+Multi-kernel Lenia adds a second generalization: multiple interacting
+chemical channels. Each channel has its own kernel and growth function.
+Channels interact via a connection weight matrix. The organisms that emerge
+from multi-channel systems are fundamentally more complex — they have
+internal differentiation, visible "organs," and behavioral repertoires that
+single-channel Lenia cannot produce.
+
+
+=============================================================================
+SECTION 2: CORE MATHEMATICS
+=============================================================================
+
+--- STATE SPACE ---
+
+C channels, each a 2D scalar field A_c : ℝ² → [0,1]
+For multi-kernel Lenia, C = 3 to 5 channels minimum for interesting organisms.
+
+A_c(x, t) = concentration of substance c at position x, time t
+
+
+--- THE KERNEL ---
+
+The kernel K defines the "neighborhood" of influence — which nearby cells
+affect the growth of a central cell. In Lenia, this is always a smooth ring:
+
+  K(r) = β · exp( -(r/R - μ_k)² / (2σ_k²) )
+
+  r = distance from center
+  R = kernel radius (spatial scale; typically 10–25 pixels)
+  μ_k = ring center as fraction of R (typically 0.4–0.6)
+  σ_k = ring width (typically 0.1–0.3)
+  β = peak amplitude (normalized so ∫ K dA = 1)
+
+The kernel is ALWAYS radially symmetric. It is ALWAYS smooth and continuous.
+It always integrates to 1 (unit mass). These constraints are what make Lenia
+stable and organism-producing.
+
+Multi-ring kernels use a sum of Gaussians:
+  K(r) = Σ_i  β_i · B3(r/R · b - (i-1)/b)
+  where B3 is the 3rd-order binomial function and b = number of rings
+
+Shorthand notation: β = [1.0, 0.5, 0.25] means three rings with decreasing
+amplitude. This produces organisms with concentric shell structure.
+
+
+--- THE GROWTH FUNCTION ---
+
+G(u) = 2 · exp( -(u - μ_g)² / (2σ_g²) ) - 1
+
+  u = neighborhood concentration (output of convolution K * A)
+  μ_g = "preferred" concentration — what density makes cells grow
+  σ_g = tolerance width — how narrow the growth "sweet spot" is
+  Output: [-1, +1] where positive = grow, negative = die
+
+The growth function is a BUMP centered at μ_g, shifted to output [-1, +1].
+This means: cells in the "right" concentration neighborhood grow toward 1;
+cells outside it shrink toward 0.
+
+Parameter regimes:
+  μ_g = 0.10–0.18  →  sparse organisms (grow in low-density halos)
+  μ_g = 0.25–0.35  →  dense organisms (grow in packed cores)
+  σ_g < 0.02       →  brittle, crystal-like, prone to shattering
+  σ_g = 0.02–0.04  →  robust, smooth organisms (sweet spot)
+  σ_g > 0.05       →  amorphous blobs, poor locomotion
+
+
+--- THE UPDATE RULE ---
+
+For each channel c, at each pixel x, each timestep:
+
+  U_c(x) = Σ_k  w_{c,k} · (K_k * A_{src(k)})(x)
+
+  A_c(x, t+Δt) = clip( A_c(x, t) + Δt · G_c(U_c(x)),  0, 1 )
+
+  * = 2D convolution
+  w_{c,k} = connection weight from kernel k to channel c
+  src(k) = which channel kernel k reads from
+  clip = hard clamp to [0,1] (this is where nonlinearity comes from)
+  Δt = timestep, typically 0.1 to 0.5
+
+
+--- THE CONNECTION MATRIX ---
+
+This is the architectural heart of multi-kernel Lenia.
+
+W is a (C × K) matrix of weights. Entry w_{c,k} controls how strongly kernel
+k's convolution output drives the growth of channel c.
+
+Example 3-channel, 3-kernel configuration:
+
+  Kernel 0: radius R=13, reads from Ch0  (self-activation)
+  Kernel 1: radius R=9,  reads from Ch1  (fast excitation)
+  Kernel 2: radius R=21, reads from Ch2  (slow inhibition)
+
+       K0     K1     K2
+  Ch0: [1.0,  0.2,  -0.5]   ← K0 activates Ch0, K2 inhibits it
+  Ch1: [0.5,  1.0,   0.0]   ← Ch0 drives Ch1 excitation
+  Ch2: [0.0,  0.8,   1.0]   ← Ch1 drives Ch2 inhibition field
+
+This creates a 3-body activator-inhibitor system. Ch0 is the organism "body".
+Ch1 is a fast-spreading excitation ahead of the organism (locomotion signal).
+Ch2 is a slow-spreading inhibition behind it (prevents self-intersection).
+
+Activator-inhibitor dynamics are why organisms move directionally. The
+excitation channel spreads forward; the inhibition suppresses the original
+position. Net effect: the organism glides.
+
+
+=============================================================================
+SECTION 3: ORGANISM CATALOG
+=============================================================================
+
+All organisms below are real, documented Lenia attractors. Parameter
+configurations are given for reference. The key insight: organisms are not
+designed. They are FOUND by searching parameter space.
+
+ORBIUM ("sphere")
+  Channel: 1  |  Kernel: single ring  |  R=13, μ_k=0.5, β=[1]
+  Growth: μ_g=0.15, σ_g=0.015, Δt=0.1
+  Behavior: smooth gliding sphere. The "hydrogen atom" of Lenia. Every Lenia
+  researcher finds this first. Speed ≈ 0.5 px/step. Perfectly round.
+  Visual: dense white core, thin dark halo, clean wake.
+
+SCUTIUM ("shield")
+  R=13, μ_g=0.18, σ_g=0.02
+  Behavior: flattened, shield-shaped. Faster than Orbium (~0.8 px/step).
+  Has visible asymmetric density distribution — "front" is brighter.
+
+GYRORBIUM ("spinning sphere")  
+  Multi-ring: β=[1,0.5], R=13
+  Behavior: translates AND rotates. The second ring in the kernel breaks
+  symmetry enough to induce spin. Leaves helical wake.
+
+HYDROGEMINIUM ("water-born")
+  σ_g=0.04, R=13, multi-channel 2C
+  Behavior: unstable at startup, organizes over ~500 frames into a stable
+  swimmer. Can undergo binary fission when population density is high.
+  Key emergent property: reproduces.
+
+CHROMORBIUM ("color sphere") — multi-kernel exclusive
+  3-channel, connection matrix with cross-channel weights
+  Behavior: channels pulse at different phases. Organism appears to breathe.
+  RGB composite shows color cycling as internal oscillation propagates.
+  
+VOLVOX ("colony organism") — multi-kernel exclusive
+  4-channel, sparse W matrix (many zeros)
+  Behavior: multiple sub-organisms orbit a shared center of mass. Looks like
+  a rotating colony. Emergent from channel-channel coupling, not programmed.
+
+
+=============================================================================
+SECTION 4: GPU RENDERING APPROACH
+=============================================================================
+
+TEXTURE LAYOUT
+  Each channel: 512×512 RGBA32F render target
+  .r = current concentration A_c
+  .g = previous concentration (for velocity / temporal effects)
+  .b = growth rate G(U) (used for heat map overlay)
+  .a = unused or available for channel-specific metadata
+
+PING-PONG FBO PATTERN
+  readBuffer[c]  → fragment shader → writeBuffer[c]
+  swap after each frame
+  Never read and write to the same texture in the same pass
+
+CONVOLUTION SHADER STRATEGY
+  For R ≤ 20 pixels: direct texture sampling in a loop
+    - Sample K ring as N points (N = 2πR, ≈ 60–100 points for R=13)
+    - Weights from K(r) evaluated at each sample point
+    - Single pass, no intermediate texture needed
+    
+  For R > 20 pixels: two-pass separable approximation or FFT
+    - True Gaussian rings aren't separable, but can be approximated with
+      a sequence of 1D passes at different angles
+    - Or: precompute K as a texture, use it as a lookup during convolution
+
+CHANNEL COMPOSITE PASS
+  Final render blends channels into RGBA:
+    R = A_0  (primary organism body — red/orange)
+    G = A_1  (excitation field — green/cyan)
+    B = A_2  (inhibition field — blue/violet)
+    A = max(A_0, A_1, A_2)  (alpha for bloom)
+  
+  Additive blending: gl.blendFunc(SRC_ALPHA, ONE)
+  → channels overlap as glowing colored light, not opaque layers
+  → dense multi-channel overlap = white-hot cores
+  → sparse regions = individual channel colors visible
+
+POST-PROCESSING
+  1. Temporal decay: compose previous frame at 0.93× — organism trails
+  2. Bloom: extract pixels > 0.7, blur 3× at 2px/4px/8px, add back
+  3. Chromatic aberration: sample R, G, B at ±1.5px offset at screen edges
+  4. Growth heat map overlay: abs(G(U)) > 0.3 → orange glow = active growth
+
+
+=============================================================================
+SECTION 5: AESTHETIC LANGUAGE
+=============================================================================
+
+WHAT LENIA ART SHOULD FEEL LIKE:
+  - Biological but wrong — recognizable as "life-like" but fundamentally alien
+  - Luminous void — organisms on pure black, glowing with internal light
+  - Slow and inevitable — not chaotic, but patient, purposeful movement
+  - Uncomfortable aliveness — the sensation that something is watching back
+
+COLOR PALETTE (canonical):
+  Background: #000000 (absolute black, no ambient)
+  Ch0 (body):       hot magenta → electric white at density peaks
+                    hex ramp: #2d0030 → #9b00d4 → #ff00ff → #ffffff
+  Ch1 (excitation): cyan → aquamarine → white
+                    hex ramp: #003030 → #00d4c8 → #00ffee → #ffffff  
+  Ch2 (inhibition): deep violet → ultraviolet → transparent
+                    hex ramp: #0a0015 → #5500aa → #8800ff → transparent
+  Wake/trail:       same as Ch0 but at 30% opacity, smeared backward
+  Growth heat:      #ff6600 → #ffcc00 at active growth boundaries
+
+MAXIMALIST VARIANT:
+  All channels saturated simultaneously. Dense organism clusters.
+  Enable domain warping: feed organism position field into Simplex noise,
+  warp the output texture — organisms appear to swim through turbulent space.
+  Add scanline artifacts at 3% opacity.
+
+MINIMALIST VARIANT:
+  Single channel, desaturated near-white organism on deep navy void.
+  No bloom. No chromatic aberration. Pure form.
+  Useful for revealing organism geometry without visual noise.
+
+
+=============================================================================
+SECTION 6: PARAMETERS FOR AI GENERATION
+=============================================================================
+
+When generating Lenia-inspired art with AI, these are the conceptual hooks:
+
+SYSTEM PROMPTS that work well:
+  "multi-channel lenia organism, 3 chemical layers, activator-inhibitor 
+   dynamics, organism gliding on black void, channel composite RGB"
+
+  "chromorbium variant, 4-channel lenia, internal oscillation, channels 
+   pulse at different phases, biological membrane aesthetic"
+
+  "volvox colony lenia, 4 organisms orbiting shared center, wake trails,
+   additive blending, electric magenta and cyan on absolute black"
+
+  "lenia growth boundary visualization, heat map overlay showing active
+   growth regions in orange, organism core in white, inhibition field in
+   deep violet"
+
+CANVAS INTERACTIONS to support:
+  - Mouse position as asymmetric perturbation (inject A_c = 0.5 at cursor)
+  - Mouse click as organism seed (drop new initial condition at click)
+  - Scroll to adjust Δt in real-time (slow → fast → chaotic)
+  - Key press to mutate W matrix (organism personality shift mid-run)
+
+INTERESTING FAILURE MODES (aesthetically valuable):
+  - Δt too large → system explodes into white noise (render it — it's beautiful)
+  - σ_g too wide → organism dissolves into homogeneous gray fog
+  - W matrix all-positive (no inhibition) → exponential growth, full saturation
+  - Mismatch kernel radii (R0 >> R1) → two-speed dynamics, interference patterns
+
+
+=============================================================================
+END OF REPO SEED
+=============================================================================
+
+This repo is a context source for RepoScripter2.
+Also part of the ShaderForge ecosystem: shaderforge3, strange_attractors.
+Author: merrypranxter
