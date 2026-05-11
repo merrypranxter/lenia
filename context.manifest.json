@@ -6,7 +6,8 @@
   "tags": ["cellular-automata", "lenia", "generative-art", "gpu", "webgl", "organisms", "continuous", "multi-kernel", "activator-inhibitor"],
   "files": [
     "README.md",
-    "repo_seed.txt"
+    "repo_seed.txt",
+    "lenia.js"
   ],
   "ai_hints": {
     "primary_vibe": "biological-alien luminous organisms on void, multi-channel chemical dynamics, activator-inhibitor locomotion",
