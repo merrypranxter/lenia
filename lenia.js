@@ -208,12 +208,17 @@
   `;
 
   // ─── Renderer + render targets ───────────────────────────────────────────
+  // canvas/width/height are JS5 sandbox globals; fall back gracefully if absent
+  const _canvas = (typeof canvas !== 'undefined' && canvas) ? canvas : document.createElement('canvas');
+  const _width  = (typeof width  !== 'undefined' && width)  ? width  : _canvas.width  || 800;
+  const _height = (typeof height !== 'undefined' && height) ? height : _canvas.height || 600;
+
   const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
+    canvas: _canvas,
     antialias: false,
     powerPreference: 'high-performance',
   });
-  renderer.setSize(width, height);
+  renderer.setSize(_width, _height);
   renderer.setPixelRatio(1);
   renderer.autoClear = false;
 
@@ -247,8 +252,8 @@
     stencilBuffer: false,
   };
   const dispRT = [
-    new THREE.WebGLRenderTarget(width, height, dispOpts),
-    new THREE.WebGLRenderTarget(width, height, dispOpts),
+    new THREE.WebGLRenderTarget(_width, _height, dispOpts),
+    new THREE.WebGLRenderTarget(_width, _height, dispOpts),
   ];
 
   // Read pointer per channel (0 or 1 — which buffer holds current state)
@@ -345,10 +350,11 @@
   // ─── Render loop ──────────────────────────────────────────────────────────
   function frame(t) {
     // Mouse UV coordinates (Y-flipped for WebGL convention)
-    const mx = (mouse && mouse.x != null) ? mouse.x / width        : 0.5;
-    const my = (mouse && mouse.y != null) ? 1.0 - mouse.y / height : 0.5;
+    const _mouse = (typeof mouse !== 'undefined') ? mouse : null;
+    const mx = (_mouse && _mouse.x != null) ? _mouse.x / _width        : 0.5;
+    const my = (_mouse && _mouse.y != null) ? 1.0 - _mouse.y / _height : 0.5;
 
-    const injecting = isMouseDown || (mouse && mouse.buttons > 0) ? 1.0 : 0.0;
+    const injecting = isMouseDown || (_mouse && _mouse.buttons > 0) ? 1.0 : 0.0;
 
     // Simulation step — one shader pass per channel
     for (let c = 0; c < 3; c++) {
