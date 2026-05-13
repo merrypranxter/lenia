@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "description": "Machine-readable Lenia organism parameter catalog. Each entry is a complete configuration sufficient to seed the simulation. Feed directly into AI generators or use as-is in lenia.js / lenia_5ch.js.",
+  "organisms": [
+    {
+      "name": "Orbium",
+      "latin": "orbium — sphere",
+      "channels": 1,
+      "kernel": {
+        "R": 13,
+        "mu_k": 0.5,
+        "sig_k": 0.15,
+        "beta": [1.0]
+      },
+      "growth": {
+        "mu_g": 0.150,
+        "sig_g": 0.015
+      },
+      "dt": 0.10,
+      "connection_matrix": [[1.0]],
+      "behavior": "Smooth gliding sphere. The hydrogen atom of Lenia — the simplest stable organism every researcher finds first. Speed ~0.5 px/step. Perfectly round. Splits symmetrically if two collide head-on.",
+      "visual": "Dense white-hot magenta core, dark halo ring, clean straight wake. Looks like a living cell under electron microscope."
+    },
+    {
+      "name": "Scutium",
+      "latin": "scutium — shield",
+      "channels": 1,
+      "kernel": {
+        "R": 13,
+        "mu_k": 0.5,
+        "sig_k": 0.15,
+        "beta": [1.0]
+      },
+      "growth": {
+        "mu_g": 0.180,
+        "sig_g": 0.020
+      },
+      "dt": 0.12,
+      "connection_matrix": [[1.0]],
+      "behavior": "Flattened shield-shape. Faster than Orbium (~0.8 px/step). Visible asymmetric density distribution — front hemisphere is brighter and denser than rear.",
+      "visual": "Oblate oval, leading edge lit like a crescent moon, trailing edge fades. Scythe-shaped wake."
+    },
+    {
+      "name": "Gyrorbium",
+      "latin": "gyrorbium — spinning sphere",
+      "channels": 1,
+      "kernel": {
+        "R": 13,
+        "mu_k": 0.5,
+        "sig_k": 0.15,
+        "beta": [1.0, 0.5]
+      },
+      "growth": {
+        "mu_g": 0.150,
+        "sig_g": 0.015
+      },
+      "dt": 0.10,
+      "connection_matrix": [[1.0]],
+      "behavior": "Translates AND rotates. The second ring in the kernel breaks the symmetry enough to induce spin. Leaves a helical wake. Rotation period ~30 steps.",
+      "visual": "Sphere with a dimmer outer ring, comet-like spiral wake that slowly corkscrews across the field."
+    },
+    {
+      "name": "Aquarium",
+      "latin": "aquarium — water vessel",
+      "channels": 1,
+      "kernel": {
+        "R": 13,
+        "mu_k": 0.5,
+        "sig_k": 0.20,
+        "beta": [1.0]
+      },
+      "growth": {
+        "mu_g": 0.280,
+        "sig_g": 0.030
+      },
+      "dt": 0.15,
+      "connection_matrix": [[1.0]],
+      "behavior": "Dense stationary blob with pulsing membrane. No locomotion, but visible surface oscillation. Looks like a breathing cell membrane under stress.",
+      "visual": "Bright white core, thick diffuse halo. Membrane boundary shimmers with standing-wave ripples at 5–8 frames period."
+    },
+    {
+      "name": "Hydrogeminium",
+      "latin": "hydrogeminium — water-born",
+      "channels": 2,
+      "kernel": {
+        "R": 13,
+        "mu_k": 0.5,
+        "sig_k": 0.15,
+        "beta": [1.0]
+      },
+      "growth": {
+        "mu_g": [0.160, 0.140],
+        "sig_g": [0.040, 0.035]
+      },
+      "dt": 0.12,
+      "connection_matrix": [
+        [1.0, -0.2],
+        [0.3,  1.0]
+      ],
+      "behavior": "Unstable at startup. Organizes over ~500 frames into a stable swimmer. At high population density, undergoes binary fission — splits into two viable daughter organisms. The only single-organism system that reproduces without engineered seeding.",
+      "visual": "Turbulent magenta cloud condensing into an elongated form. Fission event: single organism elongates into a barbell shape, then pinches. Two daughters diverge."
+    },
+    {
+      "name": "Chromorbium",
+      "latin": "chromorbium — color sphere",
+      "channels": 3,
+      "kernel": {
+        "radii": [13, 9, 21],
+        "mu_k": 0.5,
+        "sig_k": 0.15,
+        "beta": [1.0]
+      },
+      "growth": {
+        "mu_g": [0.150, 0.140, 0.130],
+        "sig_g": [0.015, 0.018, 0.016]
+      },
+      "dt": 0.12,
+      "connection_matrix": [
+        [ 1.0,  0.2, -0.5],
+        [ 0.5,  1.0,  0.0],
+        [ 0.0,  0.8,  1.0]
+      ],
+      "behavior": "Three channels pulse at offset phases — the organism appears to breathe. RGB composite shows color cycling from magenta to cyan to violet as internal oscillation propagates through the connection matrix.",
+      "visual": "Shifting chromatic membrane. When Ch0 peaks (magenta), Ch1 (cyan) is in its growth phase. Ch2 (violet) lags by ~15 frames. The organism looks like it has a beating, color-changing heart."
+    },
+    {
+      "name": "Volvox",
+      "latin": "volvox — rotating colony",
+      "channels": 4,
+      "kernel": {
+        "radii": [13, 9, 21, 15],
+        "mu_k": 0.5,
+        "sig_k": 0.15,
+        "beta": [1.0]
+      },
+      "growth": {
+        "mu_g": [0.150, 0.140, 0.130, 0.160],
+        "sig_g": [0.020, 0.020, 0.020, 0.020]
+      },
+      "dt": 0.10,
+      "connection_matrix": [
+        [ 1.0,  0.0, -0.4,  0.1],
+        [ 0.3,  1.0,  0.0, -0.2],
+        [ 0.0,  0.5,  1.0,  0.0],
+        [ 0.2,  0.0,  0.3,  1.0]
+      ],
+      "behavior": "Multiple sub-organisms orbit a shared center of mass. Looks like a rotating colony of microbes. The rotation is emergent from channel-channel coupling — not programmed. Colony period ~120–200 frames depending on initial conditions.",
+      "visual": "4–6 bright lobes orbiting a dim center. Trails from each lobe create a pinwheel of glowing cyan and magenta arcs. The whole structure looks like a living mandala."
+    },
+    {
+      "name": "Pentarbium",
+      "latin": "pentarbium — five-armed sphere",
+      "channels": 5,
+      "kernel": {
+        "radii": [13, 9, 21, 15, 11],
+        "mu_k": 0.5,
+        "sig_k": 0.15,
+        "beta": [1.0]
+      },
+      "growth": {
+        "mu_g": [0.150, 0.140, 0.130, 0.160, 0.145],
+        "sig_g": [0.020, 0.020, 0.020, 0.020, 0.025]
+      },
+      "dt": 0.10,
+      "connection_matrix": [
+        [ 1.0,  0.0, -0.4,  0.1,  0.0],
+        [ 0.3,  1.0,  0.0, -0.2,  0.0],
+        [ 0.0,  0.5,  1.0,  0.0, -0.3],
+        [ 0.2,  0.0,  0.3,  1.0,  0.0],
+        [ 0.0,  0.1,  0.0,  0.6,  1.0]
+      ],
+      "behavior": "Five-channel organism with visible internal structure — distinct 'organs' visible in channel overlay. Ch4 acts as a structural scaffold, making the organism's skeleton visible as a dim geometric armature.",
+      "visual": "Complex multi-lobed organism. Channel overlay: magenta core, cyan excitation cloud, violet suppression halo, orange trace trail, and a faint white skeletal frame that holds the whole shape together."
+    }
+  ],
+  "failure_modes": [
+    {
+      "name": "White noise explosion",
+      "trigger": "Δt > 0.5 with any standard config",
+      "visual": "System explodes into uniform white noise in 10–20 frames. Aesthetically: instant static art. Render it."
+    },
+    {
+      "name": "Gray fog",
+      "trigger": "σ_g > 0.08",
+      "visual": "Organism dissolves into homogeneous gray field. No structure. Slow fade to #808080."
+    },
+    {
+      "name": "Exponential saturation",
+      "trigger": "All W entries positive (no inhibition)",
+      "visual": "Full field saturates to 1.0 in seconds. Renders as solid white-hot bloom. Then slowly decays if you re-enable inhibition."
+    },
+    {
+      "name": "Two-speed interference",
+      "trigger": "R0 = 25, R1 = 5 (extreme radius mismatch)",
+      "visual": "Fast-scale and slow-scale dynamics fight each other. Produces Moiré-like interference rings and turbulent, spinning glitch-organisms."
+    }
+  ]
+}

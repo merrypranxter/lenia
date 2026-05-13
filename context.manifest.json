@@ -3,25 +3,125 @@
   "id": "lenia",
   "name": "Lenia — Multi-Kernel Continuous Cellular Automata",
   "description": "Self-organizing alien organisms from pure mathematics. Multi-channel activator-inhibitor dynamics, GPU convolution, emergent locomotion. Context source for RepoScripter2 and ShaderForge.",
-  "tags": ["cellular-automata", "lenia", "generative-art", "gpu", "webgl", "organisms", "continuous", "multi-kernel", "activator-inhibitor"],
+  "tags": [
+    "cellular-automata", "lenia", "generative-art", "gpu", "webgl",
+    "organisms", "continuous", "multi-kernel", "activator-inhibitor",
+    "glsl", "shadertoy", "raymarching", "reaction-diffusion", "cpu"
+  ],
   "files": [
     "README.md",
     "repo_seed.txt",
-    "lenia.js"
+    "lenia.js",
+    "lenia_5ch.js",
+    "lenia_cpu.js",
+    "lenia.glsl",
+    "lenia_raymarch.glsl",
+    "organisms.json",
+    "shaders/kernel_vis.glsl",
+    "shaders/lenia_procedural.glsl"
   ],
-  "ai_hints": {
-    "primary_vibe": "biological-alien luminous organisms on void, multi-channel chemical dynamics, activator-inhibitor locomotion",
-    "render_target": "Three.js WebGL2 with GPGPU ping-pong FBOs, channel composite pass, additive blending",
-    "aesthetic_keywords": ["luminous void", "alien biology", "chemical channels", "organism trails", "membrane oscillation", "glowing cores"],
-    "known_organisms": ["Orbium", "Scutium", "Gyrorbium", "Hydrogeminium", "Chromorbium", "Volvox"],
-    "interaction_hooks": ["mouse inject concentration", "click to seed organism", "scroll adjusts timestep"],
-    "color_palette": {
-      "background": "#000000",
-      "channel_0": "#ff00ff",
-      "channel_1": "#00ffee",
-      "channel_2": "#8800ff",
-      "growth_heat": "#ff6600",
-      "hot_core": "#ffffff"
+  "glsl_files": {
+    "lenia.glsl": {
+      "format": "shadertoy",
+      "requires_feedback": true,
+      "description": "Full simulation — Buffer A (sim) + Image (display). Paste into Shadertoy; set Buffer A iChannel0 to itself."
+    },
+    "lenia_raymarch.glsl": {
+      "format": "standalone",
+      "requires_feedback": false,
+      "description": "3D volumetric raymarched visualizer. Paste directly into any iTime/iResolution GLSL runner. No textures needed."
+    },
+    "shaders/kernel_vis.glsl": {
+      "format": "standalone",
+      "requires_feedback": false,
+      "description": "2×2 panel kernel shape visualizer. Debug and tune kernel parameters visually."
+    },
+    "shaders/lenia_procedural.glsl": {
+      "format": "standalone",
+      "requires_feedback": false,
+      "description": "Procedural Lenia aesthetic — no simulation, instant organisms. 5 render modes via #define RENDER_MODE."
     }
+  },
+  "js_files": {
+    "lenia.js": {
+      "runtime": "JS5/Three.js WebGL2",
+      "channels": 3,
+      "organism": "Chromorbium family",
+      "description": "3-channel GPGPU sim with ping-pong FBOs. Runs in RepoScripter2 sandbox."
+    },
+    "lenia_5ch.js": {
+      "runtime": "JS5/Three.js WebGL2",
+      "channels": 5,
+      "organism": "Volvox/Pentarbium",
+      "description": "5-channel GPGPU sim. Colony organisms orbiting shared center. Richer W matrix."
+    },
+    "lenia_cpu.js": {
+      "runtime": "Vanilla JS / Canvas 2D",
+      "channels": 1,
+      "organism": "Orbium",
+      "description": "Pure CPU reference implementation. No WebGL. Float32Array simulation. For prototyping."
+    }
+  },
+  "ai_hints": {
+    "primary_vibe": "biological-alien luminous organisms on void, multi-channel chemical dynamics, activator-inhibitor locomotion, phosphorescent trails",
+    "render_target": "Three.js WebGL2 with GPGPU ping-pong FBOs, channel composite pass, additive blending",
+    "aesthetic_keywords": [
+      "luminous void", "alien biology", "chemical channels", "organism trails",
+      "membrane oscillation", "glowing cores", "activator-inhibitor", "bioluminescent",
+      "phosphorescent", "breathing organisms", "colony rotation", "plasma fringe"
+    ],
+    "known_organisms": [
+      "Orbium", "Scutium", "Gyrorbium", "Aquarium",
+      "Hydrogeminium", "Chromorbium", "Volvox", "Pentarbium"
+    ],
+    "render_modes": [
+      "0: Chromorbium — color cycling, breathes, channels pulse at offset phases",
+      "1: Orbium swarm — pure magenta gliders, clean wakes",
+      "2: Volvox colony — gold/cyan mandala, orbit ring",
+      "3: Growth boundary — heat-map dominant, orange pulse at active growth",
+      "4: Minimalist — near-white organism on deep navy, pure form"
+    ],
+    "interaction_hooks": [
+      "mouse click: inject organism concentration at cursor",
+      "mouse drag: pour continuous concentration stream",
+      "scroll wheel: adjust timestep (slow → chaos → white noise)",
+      "key 'm': mutate growth parameters mid-run (personality shift)",
+      "key 'r': full reseed (new random organisms)",
+      "key 'v': Volvox colony seed (ring arrangement)"
+    ],
+    "parameter_guide": {
+      "dt_stable":   "0.08–0.15 → stable Orbium family",
+      "dt_fast":     "0.20–0.30 → faster, slightly unstable",
+      "dt_chaotic":  "0.40–0.50 → glitch organisms, interference",
+      "dt_explode":  "> 0.50 → white noise explosion (render it)",
+      "mu_g_sparse": "0.10–0.18 → sparse gliders, clean wakes",
+      "mu_g_dense":  "0.25–0.35 → dense packed cores, slow"
+    },
+    "color_palette": {
+      "background":    "#000000",
+      "ch0_dark":      "#2d0030",
+      "ch0_mid":       "#9b00d4",
+      "ch0_bright":    "#ff00ff",
+      "ch0_hot":       "#ffffff",
+      "ch1_dark":      "#003030",
+      "ch1_mid":       "#00d4c8",
+      "ch1_bright":    "#00ffee",
+      "ch2_dark":      "#0a0015",
+      "ch2_mid":       "#5500aa",
+      "ch2_bright":    "#8800ff",
+      "ch3_amber":     "#ff6600",
+      "ch3_gold":      "#ffcc00",
+      "ch4_scaffold":  "#99bbff"
+    },
+    "ai_prompts": [
+      "multi-channel lenia organism, 3 chemical layers, activator-inhibitor dynamics, organism gliding on black void, channel composite RGB, magenta body cyan excitation violet inhibition",
+      "chromorbium variant, 4-channel lenia, internal oscillation, channels pulse at different phases, biological membrane, breathing organism aesthetic",
+      "volvox colony lenia, 4 organisms orbiting shared center, wake trails, additive blending, electric magenta and cyan on absolute black, rotating mandala",
+      "lenia growth boundary visualization, heat map overlay showing active growth regions in orange, organism core in white, inhibition field in deep violet",
+      "lenia raymarch 3D volumetric, radial basis function organisms, transmission rendering, magenta and cyan emission, deep space void background",
+      "orbium swarm lenia, 6 gliders on pure black, phosphorescent wake trails, minimal palette, white-hot cores, slow patient movement",
+      "lenia failure mode, delta_t explosion, white noise bloom, static organism, beautiful glitch, oversaturated field"
+    ]
   }
 }
+
