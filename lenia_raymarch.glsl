@@ -161,8 +161,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv  = (fragCoord - 0.5 * iResolution.xy) / min(iResolution.x, iResolution.y);
 
     // Camera orbit via mouse
-    float yaw   =  iMouse.z > 0.0 ? (iMouse.x / iResolution.x - 0.5) * 6.28 : iTime * 0.15;
-    float pitch = -iMouse.z > 0.0 ? (iMouse.y / iResolution.y - 0.5) * 3.14 : 0.25;
+    float yaw   = iMouse.z > 0.0 ? (iMouse.x / iResolution.x - 0.5) * 6.28 : iTime * 0.15;
+    float pitch = iMouse.z > 0.0 ? (iMouse.y / iResolution.y - 0.5) * 3.14 : 0.25;
     mat3  cam   = rotY(yaw) * rotX(pitch);
 
     // Ray setup

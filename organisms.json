@@ -176,12 +176,12 @@
   "failure_modes": [
     {
       "name": "White noise explosion",
-      "trigger": "Δt > 0.5 with any standard config",
+      "trigger": "dt > 0.5 with any standard config",
       "visual": "System explodes into uniform white noise in 10–20 frames. Aesthetically: instant static art. Render it."
     },
     {
       "name": "Gray fog",
-      "trigger": "σ_g > 0.08",
+      "trigger": "sig_g > 0.08",
       "visual": "Organism dissolves into homogeneous gray field. No structure. Slow fade to #808080."
     },
     {
